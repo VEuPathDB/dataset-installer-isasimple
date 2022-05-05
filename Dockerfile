@@ -38,7 +38,7 @@ RUN export GUS_GIT_COMMIT_SHA=406b459d82449e3881da9d46426de8a71baeeb9c \
     && bld GUS/PluginMgr \
     && bld GUS/Supported
 
-RUN export APICOMMONDATA_GIT_COMMIT_SHA=e45526ce6b6f7732c93d7145d679fd9d0ad381d2 \
+RUN export APICOMMONDATA_GIT_COMMIT_SHA=527b43176241af5a3acfa840ade0f18c6f3ca11a \
     && git clone https://github.com/VEuPathDB/ApiCommonData.git \
     && cd ApiCommonData \
     && git checkout $APICOMMONDATA_GIT_COMMIT_SHA \
@@ -46,7 +46,7 @@ RUN export APICOMMONDATA_GIT_COMMIT_SHA=e45526ce6b6f7732c93d7145d679fd9d0ad381d2
     && cp $PROJECT_HOME/ApiCommonData/Load/plugin/perl/*.pm $GUS_HOME/lib/perl/ApiCommonData/Load/Plugin/ \
     && cp $PROJECT_HOME/ApiCommonData/Load/lib/perl/*.pm $GUS_HOME/lib/perl/ApiCommonData/Load/
 
-RUN export CLINEPIDATA_GIT_COMMIT_SHA=235eb04e3d56ef40c36b3c5781a9b28c66e183bd \
+RUN export CLINEPIDATA_GIT_COMMIT_SHA=b081f16824094f21bb83f0ab80d35ac2ad5d8514 \
     && git clone https://github.com/VEuPathDB/ClinEpiData.git \
     && cd ClinEpiData \
     && git checkout $CLINEPIDATA_GIT_COMMIT_SHA \
@@ -58,14 +58,7 @@ RUN perl -MCPAN -e 'install qq(Switch)' \
    && perl -MCPAN -e 'install qq(XML::Simple)'
 
 
-## RUN \
-##      apk add perl \
-##   && apk add perl-dev \
-
-##   && apk add expat-dev \
-##
-## ENV PERL5LIB=/app/lib/perl:/usr/local/share/perl5/site_perl
-
+COPY ./bin/loadStudy.bash /usr/local/bin/
 
 # This Bit copies the Premade GUS Perl Objects
 COPY ./lib/perl $GUS_HOME/lib/perl/

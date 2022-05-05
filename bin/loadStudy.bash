@@ -3,12 +3,13 @@
 # exit when any command fails
 set -e
 
-exportInvestigation -a -m $1
+# TODO: -k sid is a bandaid
+exportInvestigation.pl -a -m $1 -k sid
 
 # basename of last directory modified
 study="$(basename $(\ls -1dt ./*/ | head -n 1))"
 
-ontologyTermsToTabDelim.pl ontologyMapping.xml ${study}
+ontologyTermsToTabDelim.pl ${study}/ontologyMapping.xml ${study}
 
 ga GUS::Supported::Plugin::InsertExternalDatabase --name $study --commit;
 ga GUS::Supported::Plugin::InsertExternalDatabaseRls --databaseName $study --databaseVersion dontcare --commit;
@@ -34,13 +35,13 @@ ga ApiCommonData::Load::Plugin::InsertEntityGraph \
     --ontologyMappingFile $PWD/$study/ontologyMapping.xml \
     --extDbRlsSpec "${study}|dontcare" \
     --dateObfuscationFile $PWD/$study/dateObfuscation.txt \
-    --schema EDA \
+    --schema EDA_UD \
     --commit #    --valueMappingFile $PWD/$study/valueMapping.txt  --ontologyMappingOverrideFileBaseName termOverride.xml
 
 
 ga ApiCommonData::Load::Plugin::LoadAttributesFromEntityGraph \
     --extDbRlsSpec "${study}|dontcare" \
-    --schema EDA \
+    --schema EDA_UD \
     --ontologyExtDbRlsSpec "${study}_terms|dontcare" \
     --logDir $PWD \
     --commit
@@ -48,11 +49,11 @@ ga ApiCommonData::Load::Plugin::LoadAttributesFromEntityGraph \
 ga ApiCommonData::Load::Plugin::LoadEntityTypeAndAttributeGraphs \
     --logDir $PWD \
     --extDbRlsSpec "${study}|dontcare" \
-    --schema EDA \
+    --schema EDA_UD \
     --ontologyExtDbRlsSpec "${study}_terms|dontcare" \
     --commit
 
  ga ApiCommonData::Load::Plugin::LoadDatasetSpecificEntityGraph \
     --extDbRlsSpec "${study}|dontcare" \
-    --schema EDA \
+    --schema EDA_UD \
     --commit
