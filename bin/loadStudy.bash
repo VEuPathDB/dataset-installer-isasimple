@@ -44,6 +44,7 @@ ga ApiCommonData::Load::Plugin::LoadAttributesFromEntityGraph \
     --schema EDA_UD \
     --ontologyExtDbRlsSpec "${study}_terms|dontcare" \
     --logDir $PWD \
+    --runRLocally \
     --commit
 
 ga ApiCommonData::Load::Plugin::LoadEntityTypeAndAttributeGraphs \

@@ -38,7 +38,7 @@ RUN export GUS_GIT_COMMIT_SHA=406b459d82449e3881da9d46426de8a71baeeb9c \
     && bld GUS/PluginMgr \
     && bld GUS/Supported
 
-RUN export APICOMMONDATA_GIT_COMMIT_SHA=527b43176241af5a3acfa840ade0f18c6f3ca11a \
+RUN export APICOMMONDATA_GIT_COMMIT_SHA=c4743ce1b584918e8c5dbf6680d1f22c537164e3 \
     && git clone https://github.com/VEuPathDB/ApiCommonData.git \
     && cd ApiCommonData \
     && git checkout $APICOMMONDATA_GIT_COMMIT_SHA \
@@ -58,7 +58,7 @@ RUN perl -MCPAN -e 'install qq(Switch)' \
    && perl -MCPAN -e 'install qq(XML::Simple)'
 
 
-COPY ./bin/loadStudy.bash /usr/local/bin/
+COPY ./bin/* /usr/local/bin/
 
 # This Bit copies the Premade GUS Perl Objects
 COPY ./lib/perl $GUS_HOME/lib/perl/
