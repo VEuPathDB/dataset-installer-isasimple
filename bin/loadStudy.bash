@@ -3,8 +3,12 @@
 # exit when any command fails
 set -e
 
-# TODO: -k sid is a bandaid
-exportInvestigation.pl -a -m $1 -k sid
+inputFileOrDir=$1;
+userDatasetId=$2
+metadataJsonFile=$3
+
+# NOTE:  -k ::: means use first col as id
+exportInvestigation.pl -a -m $inputFileOrDir -k ':::'
 
 # basename of last directory modified
 study="$(basename $(\ls -1dt ./*/ | head -n 1))"
@@ -36,6 +40,7 @@ ga ApiCommonData::Load::Plugin::InsertEntityGraph \
     --extDbRlsSpec "${study}|dontcare" \
     --dateObfuscationFile $PWD/$study/dateObfuscation.txt \
     --schema EDA_UD \
+    --userDatasetId $userDatasetId \
     --commit #    --valueMappingFile $PWD/$study/valueMapping.txt  --ontologyMappingOverrideFileBaseName termOverride.xml
 
 
@@ -58,3 +63,7 @@ ga ApiCommonData::Load::Plugin::LoadEntityTypeAndAttributeGraphs \
     --extDbRlsSpec "${study}|dontcare" \
     --schema EDA_UD \
     --commit
+
+ ga ApiCommonData::Load::Plugin::InsertStudyDataset \
+     --userDatasetId $userDatasetId \
+     --metadataFile $metadataJsonFile
