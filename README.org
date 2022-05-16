@@ -1,0 +1,74 @@
+#+TITLE: dataset-installer-isasimple
+
+The purpose is to load a clinical epidemiology study derived from user contributed files.  We use Docker to create a GUS Environment capable of running gus plugins.
+
+* Load a study
+
+** No container
+
+1. init a gus environment (project_home/gus_home) suitable for loading data (preferably with tsrc group "baseLoading" into project_home)
+2. ensure you have an oracle instance with EDA_UD tables installed
+3. create a gus_home/config/gus.config
+4. Build GUS (create perl object layer);  Build CBIL (ISA parser);  Build ApiCommonData/Load (EDA plugins)
+5. create a working directory which contains the tab file(s) to be loaded and a metadata.json (see below)
+6. run loadStudy bash script from this repository
+   #+begin_example
+   loadStudy.bash $inputFile $userDatasetId $metadataJsonFile
+   #+end_example
+
+** Yes container
+
+1. ensure singularity/apptainer is installed
+2. ensure you have an oracle instance with EDA_UD tables installed
+3. create a gus_home/config/gus.config
+4. create a working directory which contains the tab file(s) to be loaded and a metadata.json (see below)
+5. run loadStudy.bash in container
+   #+begin_example
+   singularity run \
+    --bind $workDir:/work \
+    --bind $componentGusConfigFile:/gusApp/gus_home/gus.config \
+    --bind $ORACLE_HOME/network/admin:/opt/oracle/instantclient_21_6/network/admin
+    docker://veupathdb/dataset-installer-isasimple:latest loadStudy.bash $inputFile $userDatasetId $metadataJsonFile
+   #+end_example
+   - $workDir :: temp directory with the user's data file and the metadata.json
+   - $componentGusConfigFile ::  gus.config file for the project/component (this has the database connection info)
+   - $inputFile :: basename of the file from the user (as the user had named it);  Must be in the workDir
+   - $userDatasetId :: primary key from  apidbuserdataset.installeduserdataset
+   - $metadataJsonFile ::  metadata.json; must be in workDir
+   - $ORACLE_HOME :: this is an environment variable;  This is needed to map the LDAP alias in the gus.config file
+
+* Delete a study
+** No container
+1. Do steps 1-3 from above
+2. run deleteStudy perl script from this repository
+   #+begin_example
+   deleteStudy.pl $userDatasetId
+   #+end_example
+
+** Yes container
+1. Do steps 1-3 from above
+2. run deleteStudy perl script in container
+      #+begin_example
+   singularity run \
+    --bind $componentGusConfigFile:/gusApp/gus_home/gus.config \
+    --bind $ORACLE_HOME/network/admin:/opt/oracle/instantclient_21_6/network/admin
+    docker://veupathdb/dataset-installer-isasimple:latest deleteStudy.pl $userDatasetId
+   #+end_example
+
+* metadata.json
+
+Currently minimal info which describes a study.  May expand in the future.
+
+#+begin_src json
+{
+    "description": "This is some info about this study",
+    "name": "Study Name",
+}
+#+end_src
+* About the database connection in the gus.config
+gus plugins use perl DBI to connect to database instances.  Database instances are configured in the gus.config file as "dbiDsn=BLAH".  Use aliases if you have a  tnsnames.ora or aliases mapped with ldap (usually we get this for "free").  If you are running within a container and want to use the tnsnames.ora or ldap you must bind the directory as shown above.  An alternative is to specify complete connection info like:
+#+begin_example
+dbi:DriverName:database_name
+dbi:DriverName:database_name@hostname:port
+dbi:DriverName:database=database_name;host=hostname;port=port
+#+end_example
