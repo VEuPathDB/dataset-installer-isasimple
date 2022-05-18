@@ -35,6 +35,9 @@ foreach my $studyId (keys %$studies) {
         &deleteGraphTables($dbh, $studyId);
         &deleteAttributeTables($dbh, $entityTypeId);
         &deleteProcessAttributes($dbh, $entityTypeId);
+
+        $dbh->do("delete EDA_UD.studydataset where user_dataset_id = $userDatasetId");
+
         &deleteOtherEda($dbh, $studyId, $entityTypeId);
     }
 
@@ -90,7 +93,7 @@ sub deleteOtherEda {
         deleteByEntityTypeId($dbh, $entityTypeId, $_);
     }
 
-    foreach("studycharacteristic", "studydataset", "EntityType", "Study") {
+    foreach("studycharacteristic", "EntityType", "Study") {
         deleteByStudyId($dbh, $studyId, $_);
     }
 
