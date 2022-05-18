@@ -7,8 +7,7 @@ inputFileOrDir=$1;
 userDatasetId=$2
 metadataJsonFile=$3
 
-# NOTE:  -k ::: means use first col as id
-exportInvestigation.pl -a -m $inputFileOrDir -k ':::'
+exportInvestigation.pl -a -m $inputFileOrDir
 
 # basename of last directory modified
 study="$(basename $(\ls -1dt ./*/ | head -n 1))"
