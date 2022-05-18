@@ -26,7 +26,7 @@ The purpose is to load a clinical epidemiology study derived from user contribut
    #+begin_example
    singularity run \
     --bind $workDir:/work \
-    --bind $componentGusConfigFile:/gusApp/gus_home/gus.config \
+    --bind $componentGusConfigFile:/gusApp/gus_home/config/gus.config \
     --bind $ORACLE_HOME/network/admin:/opt/oracle/instantclient_21_6/network/admin
     docker://veupathdb/dataset-installer-isasimple:latest loadStudy.bash $inputFile $userDatasetId $metadataJsonFile
    #+end_example
@@ -50,7 +50,7 @@ The purpose is to load a clinical epidemiology study derived from user contribut
 2. run deleteStudy perl script in container
       #+begin_example
    singularity run \
-    --bind $componentGusConfigFile:/gusApp/gus_home/gus.config \
+    --bind $componentGusConfigFile:/gusApp/gus_home/config/gus.config \
     --bind $ORACLE_HOME/network/admin:/opt/oracle/instantclient_21_6/network/admin
     docker://veupathdb/dataset-installer-isasimple:latest deleteStudy.pl $userDatasetId
    #+end_example
