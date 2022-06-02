@@ -2,6 +2,21 @@
 
 The purpose is to load a clinical epidemiology study derived from user contributed files.  We use Docker to create a GUS Environment capable of running gus plugins.
 
+* About the GUS objects
+the "res" directory has a file of prebuild GUS model objects.  They were made by running
+
+#+begin_example
+# login to yew or other veupath server where you have a gus environment
+# modify your $GUS_HOME/config/gus.config to point to a current database instance
+
+touch $PROJECT_HOME/GusSchema/Definition/config/gus_schema.xml
+bld GUS
+cd $GUS_HOME/lib/perl/GUS
+tar -cvzf model.tar.gz Model
+# copy model.tar.gz into the "res" directory of this repo
+#+end_example
+
+
 * Load a study
 
 ** No container
