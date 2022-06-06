@@ -36,7 +36,7 @@ foreach my $studyId (keys %$studies) {
         &deleteAttributeTables($dbh, $entityTypeId);
         &deleteProcessAttributes($dbh, $entityTypeId);
 
-        $dbh->do("delete EDA_UD.studydataset where user_dataset_id = $userDatasetId");
+        $dbh->do("delete ApidbUserDatasets.datasetattributes where user_dataset_id = $userDatasetId");
 
         &deleteOtherEda($dbh, $studyId, $entityTypeId);
     }
@@ -103,8 +103,8 @@ sub deleteOtherEda {
 sub deleteProcessAttributes {
     my ($dbh, $entityTypeId) = @_;
 
-    $dbh->do("delete eda_ud.processattributes where in_entity_id in (select entity_attributes_id from eda_ud.entityattributes where entity_type_id = $entityTypeId)");
-    $dbh->do("delete eda_ud.processattributes where out_entity_id in (select entity_attributes_id from eda_ud.entityattributes where entity_type_id = $entityTypeId)");
+    $dbh->do("delete ApidbUserDatasets.processattributes where in_entity_id in (select entity_attributes_id from ApidbUserDatasets.entityattributes where entity_type_id = $entityTypeId)");
+    $dbh->do("delete ApidbUserDatasets.processattributes where out_entity_id in (select entity_attributes_id from ApidbUserDatasets.entityattributes where entity_type_id = $entityTypeId)");
 }
 
 
@@ -127,7 +127,7 @@ sub deleteAttributeTables {
 sub deleteByEntityTypeId {
     my ($dbh, $entityTypeId, $table) = @_;
 
-    $dbh->do("delete EDA_UD.${_} where entity_type_id=$entityTypeId");
+    $dbh->do("delete ApidbUserDatasets.${_} where entity_type_id=$entityTypeId");
 }
 
 sub deleteByExternalDatabaseReleaseId {
@@ -141,14 +141,14 @@ sub deleteByExternalDatabaseReleaseId {
 sub deleteByStudyId {
     my ($dbh, $studyId, $table) = @_;
 
-    $dbh->do("delete EDA_UD.${_} where study_id = $studyId");
+    $dbh->do("delete ApidbUserDatasets.${_} where study_id = $studyId");
 }
 
 sub dropDatasetSpecificTables {
     my ($dbh, $studyInternalAbbrev, $entityTypeInternalAbbrev) = @_;
 
     foreach("ANCESTORS", "ATTRIBUTEVALUE", "ATTRIBUTEGRAPH") {
-        $dbh->do("drop table EDA_UD.${_}_${studyInternalAbbrev}_${entityTypeInternalAbbrev}");
+        $dbh->do("drop table ApidbUserDatasets.${_}_${studyInternalAbbrev}_${entityTypeInternalAbbrev}");
     }
 }
 
@@ -156,7 +156,7 @@ sub queryEntityType {
     my ($dbh, $studyId) = @_;
 
     my %rv;
-    my $sql = "select entity_type_id, internal_abbrev from eda_ud.entitytype where study_id = ?";
+    my $sql = "select entity_type_id, internal_abbrev from ApidbUserDatasets.entitytype where study_id = ?";
 
     my $sh = $dbh->prepare($sql);
     $sh->execute($studyId);
@@ -180,7 +180,7 @@ sub queryStudy {
 
     my %rv;
 
-    my $sql = "select s.study_id, s.internal_abbrev, s.external_database_release_id, r.version, d.name, d.external_database_id from eda_ud.study s, sres.externaldatabase d, sres.externaldatabaserelease r where s.user_dataset_id = ? and s.external_database_release_id = r.external_database_release_id and r.external_database_id = d.external_database_id";
+    my $sql = "select s.study_id, s.internal_abbrev, s.external_database_release_id, r.version, d.name, d.external_database_id from ApidbUserDatasets.study s, sres.externaldatabase d, sres.externaldatabaserelease r where s.user_dataset_id = ? and s.external_database_release_id = r.external_database_release_id and r.external_database_id = d.external_database_id";
     my $sh = $dbh->prepare($sql);
     $sh->execute($userDatasetId);
 

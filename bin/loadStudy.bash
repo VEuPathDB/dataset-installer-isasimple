@@ -38,14 +38,14 @@ ga ApiCommonData::Load::Plugin::InsertEntityGraph \
     --ontologyMappingFile $PWD/$study/ontologyMapping.xml \
     --extDbRlsSpec "${study}|dontcare" \
     --dateObfuscationFile $PWD/$study/dateObfuscation.txt \
-    --schema EDA_UD \
+    --schema ApidbUserDatasets \
     --userDatasetId $userDatasetId \
     --commit #    --valueMappingFile $PWD/$study/valueMapping.txt  --ontologyMappingOverrideFileBaseName termOverride.xml
 
 
 ga ApiCommonData::Load::Plugin::LoadAttributesFromEntityGraph \
     --extDbRlsSpec "${study}|dontcare" \
-    --schema EDA_UD \
+    --schema ApidbUserDatasets \
     --ontologyExtDbRlsSpec "${study}_terms|dontcare" \
     --logDir $PWD \
     --runRLocally \
@@ -54,15 +54,15 @@ ga ApiCommonData::Load::Plugin::LoadAttributesFromEntityGraph \
 ga ApiCommonData::Load::Plugin::LoadEntityTypeAndAttributeGraphs \
     --logDir $PWD \
     --extDbRlsSpec "${study}|dontcare" \
-    --schema EDA_UD \
+    --schema ApidbUserDatasets \
     --ontologyExtDbRlsSpec "${study}_terms|dontcare" \
     --commit
 
  ga ApiCommonData::Load::Plugin::LoadDatasetSpecificEntityGraph \
     --extDbRlsSpec "${study}|dontcare" \
-    --schema EDA_UD \
+    --schema ApidbUserDatasets \
     --commit
 
- ga ApiCommonData::Load::Plugin::InsertStudyDataset \
+ ga ApiCommonData::Load::Plugin::InsertUserDatasetAttributes \
      --userDatasetId $userDatasetId \
      --metadataFile $metadataJsonFile
