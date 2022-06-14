@@ -5,7 +5,7 @@ set -e
 
 inputFileOrDir=$1;
 userDatasetId=$2
-metadataJsonFile=$3
+metadataJsonString=$3
 
 exportInvestigation.pl -a -m $inputFileOrDir
 
@@ -65,4 +65,4 @@ ga ApiCommonData::Load::Plugin::LoadEntityTypeAndAttributeGraphs \
 
  ga ApiCommonData::Load::Plugin::InsertUserDatasetAttributes \
      --userDatasetId $userDatasetId \
-     --metadataFile $metadataJsonFile
+     --metadataJsonString $metadataJsonString
