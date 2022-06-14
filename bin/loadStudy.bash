@@ -65,5 +65,5 @@ ga ApiCommonData::Load::Plugin::LoadEntityTypeAndAttributeGraphs \
 
  ga ApiCommonData::Load::Plugin::InsertUserDatasetAttributes \
      --userDatasetId $userDatasetId \
-     --metadataJsonString $metadataJsonString \
+     --metadataJsonString \'$metadataJsonString\' \
      --commit
