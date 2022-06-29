@@ -17,7 +17,7 @@ my $dsn = $gusConfig->getDbiDsn();
 my $user = $gusConfig->getDatabaseLogin();
 my $pass = $gusConfig->getDatabasePassword();
 
-my $dbh = DBI->connect($dsn, $user, $pass, {RaiseError=>1}) or die DBI::errstr;
+my $dbh = DBI->connect($dsn, $user, $pass, {RaiseError=>0,PrintError=>1}) or die DBI::errstr;
 
 my $userDatasetId = $ARGV[0];
 
@@ -73,7 +73,9 @@ sub queryExternalDatabase {
     my ($extDbId, $extDbRlsId) = $sh->fetchrow_array();
     $sh->finish();
 
-    die "could not find external database info for spec $name|$version" unless($extDbRlsId);
+    unless($extDbRlsId) {
+        print STDERR "could not find external database info for spec $name|$version";
+    }
 
     return ($extDbRlsId, $extDbId);
 }
@@ -161,15 +163,14 @@ sub queryEntityType {
     my $sh = $dbh->prepare($sql);
     $sh->execute($studyId);
 
-    my $ct;
     while(my ($entityTypeId, $internalAbbrev) = $sh->fetchrow_array()) {
         $rv{$entityTypeId} = $internalAbbrev;
-        $ct++;
     }
     $sh->finish();
 
-    die "Could not find entitytype for study $studyId" unless($ct);
-
+    unless(scalar keys %rv > 0) {
+        print STDERR "Could not find entitytype for study $studyId";
+    }
 
     return \%rv;
 }
@@ -194,7 +195,9 @@ sub queryStudy {
     }
     $sh->finish();
 
-    die "Could not find study for user dataset $userDatasetId" unless(scalar keys %rv > 0);
+    unless(scalar keys %rv > 0) {
+        print STDERR "Could not find study for user dataset $userDatasetId.  Nothing to delete";
+    }
     return \%rv;
 }
 
