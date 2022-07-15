@@ -31,7 +31,7 @@ RUN export CBIL_GIT_COMMIT_SHA=96eb77e1fcc6e720c97d294fc9ee2e2b2719d193 \
     && git checkout $CBIL_GIT_COMMIT_SHA \
     && bld CBIL
 
-RUN export GUS_GIT_COMMIT_SHA=406b459d82449e3881da9d46426de8a71baeeb9c \
+RUN export GUS_GIT_COMMIT_SHA=b11d5a179c5d48af134929c94b68bb908ab53bd6 \
     && git clone https://github.com/VEuPathDB/GusAppFramework.git \
     && mv GusAppFramework GUS \
     && cd GUS \
