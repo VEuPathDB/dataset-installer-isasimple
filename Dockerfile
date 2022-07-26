@@ -25,7 +25,7 @@ RUN export INSTALL_GIT_COMMIT_SHA=05197ebc4eb2046cc16e632b0b5852f21727a209 \
 
 RUN mkdir -p $GUS_HOME/config && cp $PROJECT_HOME/install/gus.config.sample $GUS_HOME/config/gus.config
 
-RUN export CBIL_GIT_COMMIT_SHA=96eb77e1fcc6e720c97d294fc9ee2e2b2719d193 \
+RUN export CBIL_GIT_COMMIT_SHA=41e17a8c7c61a6ca55fd28bd0f4883c74dcb625c \
     && git clone https://github.com/VEuPathDB/CBIL.git \
     && cd CBIL \
     && git checkout $CBIL_GIT_COMMIT_SHA \
