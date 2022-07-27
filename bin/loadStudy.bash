@@ -3,11 +3,9 @@
 # exit when any command fails
 set -e
 
-inputFileOrDir=$1
+inputFileOrDir=$1;
 userDatasetId=$2
 metadataFile=$3
-
-export NLS_LANG=AMERICAN_AMERICA.UTF8
 
 exportInvestigation.pl -a -m $inputFileOrDir
 
