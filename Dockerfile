@@ -1,13 +1,16 @@
 FROM veupathdb/rserve:2.1.3
 #FROM rocker/r-ver:4.0.4
 
-MAINTAINER John Brestelli <jbrestel@upenn.edu>
+LABEL maintainer="John Brestelli <jbrestel@upenn.edu>"
 
 #RUN R -e "install.packages('remotes')"
 #RUN R -e "remotes::install_github('VEuPathDB/plot.data','v2.1.3')"
 
 RUN apt-get update \
-    && apt-get -y install ant git wget unzip libaio1 libjson-perl libmodule-install-rdf-perl libxml-parser-perl openjdk-8-jdk libdate-manip-perl libtext-csv-perl libstatistics-descriptive-perl libtree-dagnode-perl libxml-simple-perl
+    && apt-get -y install ant git wget unzip libaio1 libjson-perl libmodule-install-rdf-perl \
+                  libxml-parser-perl openjdk-8-jdk libdate-manip-perl libtext-csv-perl \
+                  libstatistics-descriptive-perl libtree-dagnode-perl libxml-simple-perl \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /gusApp
 WORKDIR /gusApp/gus_home
