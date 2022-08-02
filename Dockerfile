@@ -47,7 +47,7 @@ RUN export APICOMMONDATA_GIT_COMMIT_SHA=96229bd05dc418430d69a965c19d11c01e411d11
     && cp $PROJECT_HOME/ApiCommonData/Load/plugin/perl/*.pm $GUS_HOME/lib/perl/ApiCommonData/Load/Plugin/ \
     && cp $PROJECT_HOME/ApiCommonData/Load/lib/perl/*.pm $GUS_HOME/lib/perl/ApiCommonData/Load/
 
-RUN export CLINEPIDATA_GIT_COMMIT_SHA=2d23a4980f8fbb17a68ef68c39bc3026243121fd \
+RUN export CLINEPIDATA_GIT_COMMIT_SHA=8bb4f0bc746d08ddb90bab660216e73e060e93de \
     && git clone https://github.com/VEuPathDB/ClinEpiData.git \
     && cd ClinEpiData \
     && git checkout $CLINEPIDATA_GIT_COMMIT_SHA \
