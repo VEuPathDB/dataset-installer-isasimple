@@ -39,7 +39,7 @@ RUN export GUS_GIT_COMMIT_SHA=b11d5a179c5d48af134929c94b68bb908ab53bd6 \
     && bld GUS/PluginMgr \
     && bld GUS/Supported
 
-RUN export APICOMMONDATA_GIT_COMMIT_SHA=db04b9b3ec6faa80c73abb5506c0eacd94315efd \
+RUN export APICOMMONDATA_GIT_COMMIT_SHA=cf3e3daf2337a88462060439bd1fcf3a4b714c34 \
     && git clone https://github.com/VEuPathDB/ApiCommonData.git \
     && cd ApiCommonData \
     && git checkout $APICOMMONDATA_GIT_COMMIT_SHA \
