@@ -96,7 +96,7 @@ foreach my $col (@{$decodedJson->{columns}}) {
     my $metadata = $col->{metadata};
     my $id = $col->{id};
 
-    print $sourceOut "$id\t" . join("\t", map { $metadata->{$_} } @$variables) . "\n";
+    print $sourceOut "$id\t" . join("\t", map { "MBIOTEMP_" . $metadata->{$_} } @$variables) . "\n";
 }
 
 print $tsvOut "\t", join("\t", @ids) . "\n";
@@ -122,19 +122,19 @@ print MAP "<ontologymappings>\n";
 
 foreach(@MATERIAL_TYPES) {
     print MAP <<MT
- <ontologyTerm source_id="TEMP_${_}" type="materialType">
+ <ontologyTerm source_id="MBIOTEMP_${_}" type="materialType">
     <name>${_}</name>
   </ontologyTerm>
 MT
 }
 foreach(@CHAR_QUALIFIERS) {
     print MAP <<CHAR;
-  <ontologyTerm parent="Source" source_id="TEMP_${_}" type="characteristicQualifier">
+  <ontologyTerm parent="Source" source_id="MBIOTEMP_${_}" type="characteristicQualifier">
     <name>${_}</name>
   </ontologyTerm>
 CHAR
 
-      print RELS "${_}\tsubClassOf\tTEMP_${sourceType}\n";
+      print RELS "${_}\tsubClassOf\tMBIOTEMP_${sourceType}\n";
 }
 
 foreach(keys %taxaSourceIds) {
@@ -194,7 +194,7 @@ sub makeTermLine {
         return "$term\t$name\n";
     }
 
-    return "TEMP_$term\t$term\n";
+    return "MBIOTEMP_$term\t$term\n";
 }
 
 sub getDistinctVariables {
