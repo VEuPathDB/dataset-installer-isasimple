@@ -36,7 +36,7 @@ ga ApiCommonData::Load::Plugin::MBioInsertEntityGraph \
   --investigationFile $PWD/$study/investigation.xml \
   --sampleDetailsFile $PWD/$study/source.tsv \
   --mbioResultsDir $PWD/$study/results  \
-  --mbioResultsFileExtensions '{ampliconTaxa => "abundance.tsv", wgsTaxa => "NA", level4ECs => "NA", pathwayAbundances => "NA", pathwayCoverages => "NA", eukdetectCpms => "NA", massSpec => "NA" }'
+  --mbioResultsFileExtensions '{ampliconTaxa => "abundance.tsv", wgsTaxa => "NA", level4ECs => "NA", pathwayAbundances => "NA", pathwayCoverages => "NA", eukdetectCpms => "NA", massSpec => "NA" }' \
   --dieOnFirstError 1 \
   --ontologyMappingFile $PWD/$study/ontologyMapping.xml \
   --extDbRlsSpec "${externalDatabaseName}|dontcare" \
