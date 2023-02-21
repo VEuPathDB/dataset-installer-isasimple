@@ -134,7 +134,7 @@ foreach(@CHAR_QUALIFIERS) {
   </ontologyTerm>
 CHAR
 
-      print RELS "${_}\tsubClassOf\tMBIOTEMP_${sourceType}\n";
+      print RELS "MBIOTEMP_${_}\tsubClassOf\tMBIOTEMP_${sourceType}\n";
 }
 
 foreach(keys %taxaSourceIds) {
