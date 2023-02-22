@@ -67,3 +67,6 @@ ga ApiCommonData::Load::Plugin::LoadEntityTypeAndAttributeGraphs \
      --userDatasetId $userDatasetId \
      --metadataFile $metadataFile \
      --commit
+
+ # This is temporary solution;  remove when merge with megastudy branch
+ updateHasCollections.pl $userDatasetId
