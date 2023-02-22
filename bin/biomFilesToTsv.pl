@@ -148,6 +148,7 @@ CHAR
       print RELS "${_}\tsubClassOf\t$relAbundanceSourceId\n";
 }
 
+print RELS "$relAbundanceSourceId\tsubClassOf\tMBIOTEMP_${sourceType}\n";
 
 print MAP "</ontologymappings>\n";
 
