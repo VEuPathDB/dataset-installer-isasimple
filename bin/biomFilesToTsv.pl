@@ -19,9 +19,12 @@ my %taxaSourceIds = ('EUPATH_0009251' => "Kingdom",
                      'EUPATH_0009255' => "Family",
                      'EUPATH_0009256' => "Genus",
                      'EUPATH_0009257' => "Species",
+                     'MBIOTEMP_TAXON_SOURCE_ID' => "Taxon ID"
     );
 
 
+
+my $taxonIdSourceID = "MBIOTEMP_TAXON_SOURCE_ID";
 
 my $relAbundanceSourceId = "EUPATH_0009250";
 my $relAbundanceDesc = "Relative taxonomic abundance analysis";
@@ -53,6 +56,9 @@ open(MAP, ">$dir/$ontologyMappingFile") or die "Cannot open file $dir/$ontologyM
 
 print TERMS &makeTermLine($sourceType, undef, 'mt');
 
+
+
+
 my @data = ();
 while(<FILE>) {
     chomp;
@@ -76,6 +82,7 @@ foreach(@$variables) {
     print TERMS &makeTermLine($_, undef, 'char');
 }
 
+
 foreach(keys %taxaSourceIds) {
     print TERMS &makeTermLine($_, $taxaSourceIds{$_}, 'taxa');
 }
@@ -96,22 +103,47 @@ foreach my $col (@{$decodedJson->{columns}}) {
     my $metadata = $col->{metadata};
     my $id = $col->{id};
 
-    print $sourceOut "$id\t" . join("\t", map { "MBIOTEMP_" . $metadata->{$_} } @$variables) . "\n";
+    print $sourceOut "$id\t" . join("\t", map { $metadata->{$_} } @$variables) . "\n";
 }
 
 print $tsvOut "\t", join("\t", @ids) . "\n";
 
 for(my $i = 0; $i < @{$decodedJson->{rows}}; $i++) {
 
-    my $taxonomyAr = $decodedJson->{rows}->[$i]->{metadata}->{Taxonomy};
+    my $taxonomyAr;
+    if($decodedJson->{rows}->[$i]->{metadata} && $decodedJson->{rows}->[$i]->{metadata}->{Taxonomy}) {
+        $taxonomyAr = $decodedJson->{rows}->[$i]->{metadata}->{Taxonomy};
+    }
+    else {
+        my $id = $decodedJson->{rows}->[$i]->{id};
+        $taxonomyAr = ["${id}_unclassified", "NA", "NA", "NA", "NA", "NA", "NA"];
+    }
+
+    my @taxArrayFixed;
+    for(my $t = 0; $t < scalar(@$taxonomyAr); $t++) {
+        my $level = $taxonomyAr->[$t];
+        if($t == 0 && $level eq 'NA') {
+            push(@taxArrayFixed, 'unclassified');
+        }
+        elsif($level eq 'NA') {
+            my $prevTax = $taxArrayFixed[$t-1];
+            my $fixed = $prevTax =~ /unclassified/ ? $prevTax : $prevTax . "_unclassified";
+
+            push(@taxArrayFixed, $fixed);
+        }
+        else {
+            push(@taxArrayFixed, $taxonomyAr->[$t]);
+        }
+    }
 
     my @line;
-    push @line, join(";", @$taxonomyAr);
+    push @line, join(";", @taxArrayFixed);
 
     for(my $j = 0; $j < @ids; $j++) {
         push @line, $data[$i][$j];
     }
     print $tsvOut join("\t", @line) . "\n";
+
 }
 
 close $tsvOut;
