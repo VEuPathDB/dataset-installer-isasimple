@@ -70,3 +70,6 @@ ga ApiCommonData::Load::Plugin::LoadEntityTypeAndAttributeGraphs \
 
  # This is temporary solution;  remove when merge with megastudy branch
  updateHasCollections.pl $userDatasetId
+
+ # clean out tables not used by the application with partial delete
+ deleteStudy.pl $userDatasetId 1

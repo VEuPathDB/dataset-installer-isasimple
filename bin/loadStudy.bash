@@ -69,3 +69,6 @@ ga ApiCommonData::Load::Plugin::LoadEntityTypeAndAttributeGraphs \
      --userDatasetId $userDatasetId \
      --metadataFile $metadataFile \
      --commit
+
+ # clean out tables not used by the application with partial delete
+ deleteStudy.pl $userDatasetId 1

@@ -20,6 +20,7 @@ my $pass = $gusConfig->getDatabasePassword();
 my $dbh = DBI->connect($dsn, $user, $pass, {RaiseError=>0,PrintError=>1}) or die DBI::errstr;
 
 my $userDatasetId = $ARGV[0];
+my $partial = $ARGV[1];
 
 my $studies = &queryStudy($dbh, $userDatasetId);
 
@@ -31,14 +32,14 @@ foreach my $studyId (keys %$studies) {
     foreach my $entityTypeId (keys %$entityTypeIds) {
         my $entityTypeInternalAbbrev = $entityTypeIds->{$entityTypeId};
 
-        &dropDatasetSpecificTables($dbh, $studyInternalAbbrev, $entityTypeInternalAbbrev);
-        &deleteGraphTables($dbh, $studyId);
+        &dropDatasetSpecificTables($dbh, $studyInternalAbbrev, $entityTypeInternalAbbrev) unless($partial);
+        &deleteGraphTables($dbh, $studyId, $partial);
         &deleteAttributeTables($dbh, $entityTypeId);
         &deleteProcessAttributes($dbh, $entityTypeId);
 
-        $dbh->do("delete ApidbUserDatasets.datasetattributes where user_dataset_id = $userDatasetId");
+        $dbh->do("delete ApidbUserDatasets.datasetattributes where user_dataset_id = $userDatasetId")  unless($partial);
 
-        &deleteOtherEda($dbh, $studyId, $entityTypeId);
+        &deleteOtherEda($dbh, $studyId, $entityTypeId, $partial);
     }
 
     my $extDbRlsId = $studies->{$studyId}->{external_database_release_id};
@@ -52,17 +53,16 @@ foreach my $studyId (keys %$studies) {
 
     my ($termsExtDbRlsId, $termsExtDbId) = &queryExternalDatabase($dbh, $termsExtDbName, $termsExtDbVer);
 
-    &deleteOntology($dbh, $termsExtDbRlsId);
+    &deleteOntology($dbh, $termsExtDbRlsId) unless($partial);
 
     foreach($extDbRlsId, $termsExtDbRlsId) {
-        &deleteByExternalDatabaseReleaseId($dbh, $_, "ExternalDatabaseRelease");
+        &deleteByExternalDatabaseReleaseId($dbh, $_, "ExternalDatabaseRelease") unless($partial);
     }
 
     foreach($extDbId, $termsExtDbId) {
-        $dbh->do("delete SRES.ExternalDatabase where external_database_id = $_");
+        $dbh->do("delete SRES.ExternalDatabase where external_database_id = $_") unless($partial);
     }
 }
-
 
 sub queryExternalDatabase {
     my ($dbh, $name, $version) = @_;
@@ -89,14 +89,14 @@ sub deleteOntology {
 }
 
 sub deleteOtherEda {
-    my ($dbh, $studyId, $entityTypeId) = @_;
+    my ($dbh, $studyId, $entityTypeId, $partial) = @_;
 
     foreach("EntityAttributes", "AttributeUnit") {
         deleteByEntityTypeId($dbh, $entityTypeId, $_);
     }
 
     foreach("studycharacteristic", "EntityType", "Study") {
-        deleteByStudyId($dbh, $studyId, $_);
+        deleteByStudyId($dbh, $studyId, $_) unless($partial);;
     }
 
 }
@@ -111,11 +111,11 @@ sub deleteProcessAttributes {
 
 
 sub deleteGraphTables {
-    my ($dbh, $studyId) = @_;
+    my ($dbh, $studyId, $partial) = @_;
 
-    foreach("AttributeGraph", "EntityTypeGraph") {
-        deleteByStudyId($dbh, $studyId, $_);
-    }
+    &deleteByStudyId($dbh, $studyId, "AttributeGraph");
+    &deleteByStudyId($dbh, $studyId, "EntityTypeGraph") unless($partial);
+
 }
 
 sub deleteAttributeTables {
