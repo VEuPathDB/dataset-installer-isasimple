@@ -143,13 +143,13 @@ sub deleteByExternalDatabaseReleaseId {
 sub deleteByStudyId {
     my ($dbh, $studyId, $table) = @_;
 
-    $dbh->do("delete ApidbUserDatasets.${_} where study_id = $studyId");
+    $dbh->do("delete ApidbUserDatasets.${table} where study_id = $studyId");
 }
 
 sub dropDatasetSpecificTables {
     my ($dbh, $studyInternalAbbrev, $entityTypeInternalAbbrev) = @_;
 
-    foreach("ANCESTORS", "ATTRIBUTEVALUE", "ATTRIBUTEGRAPH") {
+    foreach("ANCESTORS", "COLLECTIONATTRIBUTE", "COLLECTION", "ATTRIBUTEVALUE", "ATTRIBUTEGRAPH") {
         $dbh->do("drop table ApidbUserDatasets.${_}_${studyInternalAbbrev}_${entityTypeInternalAbbrev}");
     }
 }
