@@ -108,20 +108,38 @@ foreach my $col (@{$decodedJson->{columns}}) {
 
 print $tsvOut "\t", join("\t", @ids) . "\n";
 
+
+my @possibleTaxonomyKeys;
 for(my $i = 0; $i < @{$decodedJson->{rows}}; $i++) {
 
-    my $taxonomyAr;
-    if($decodedJson->{rows}->[$i]->{metadata} && $decodedJson->{rows}->[$i]->{metadata}->{Taxonomy}) {
-        $taxonomyAr = $decodedJson->{rows}->[$i]->{metadata}->{Taxonomy};
+
+    if($i == 0 && $decodedJson->{rows}->[$i]->{metadata}) {
+        @possibleTaxonomyKeys = sort grep { /taxon/i} keys %{$decodedJson->{rows}->[$i]->{metadata}};
+    }
+
+    my @taxonomyAr;
+    # taxonomy should be either 1 string OR list of taxa k->strain
+    if(scalar @possibleTaxonomyKeys == 1) {
+        @taxonomyAr = @{$decodedJson->{rows}->[$i]->{metadata}->{$possibleTaxonomyKeys[0]}};
+    }
+
+    elsif(scalar @possibleTaxonomyKeys > 1) {
+        @taxonomyAr = map { $decodedJson->{rows}->[$i]->{metadata}->{$_} || 'NA' } @possibleTaxonomyKeys;
     }
     else {
         my $id = $decodedJson->{rows}->[$i]->{id};
-        $taxonomyAr = ["${id}_unclassified", "NA", "NA", "NA", "NA", "NA", "NA"];
+        @taxonomyAr = ("${id}_unclassified", "NA", "NA", "NA", "NA", "NA", "NA");
     }
 
+
+
     my @taxArrayFixed;
-    for(my $t = 0; $t < scalar(@$taxonomyAr); $t++) {
-        my $level = $taxonomyAr->[$t];
+    for(my $t = 0; $t < scalar(@taxonomyAr); $t++) {
+        my $level = $taxonomyAr[$t];
+
+        # if the taxon string starts with a letter and two underscores... remove them
+        $level =~ s/^\w__//;
+
         if($t == 0 && $level eq 'NA') {
             push(@taxArrayFixed, 'unclassified');
         }
@@ -132,7 +150,7 @@ for(my $i = 0; $i < @{$decodedJson->{rows}}; $i++) {
             push(@taxArrayFixed, $fixed);
         }
         else {
-            push(@taxArrayFixed, $taxonomyAr->[$t]);
+            push(@taxArrayFixed, $level);
         }
     }
 
