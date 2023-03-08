@@ -9,8 +9,9 @@ use File::Temp qw/tempfile tempdir/;
 
 use POSIX qw/strftime/;
 
-my @MATERIAL_TYPES;
-my @CHAR_QUALIFIERS;
+my $REASONABLE_ID_LENGTH = 100;
+my %MATERIAL_TYPES;
+my %CHAR_QUALIFIERS;
 
 my %taxaSourceIds = ('EUPATH_0009251' => "Kingdom",
                      'EUPATH_0009252' => "Phylum",
@@ -74,6 +75,11 @@ my $json;
     $json = <$fh>;
 }
 
+
+# handle malformed JSON with NaN
+$json =~ s/(,?\s?)NaN(\s?,?)/$1"NA"$2/g;
+
+
 my $decodedJson = decode_json($json);
 
 my $variables = &getDistinctVariables($decodedJson->{columns});
@@ -110,6 +116,7 @@ print $tsvOut "\t", join("\t", @ids) . "\n";
 
 
 my @possibleTaxonomyKeys;
+my $hasTaxonomyCount;
 for(my $i = 0; $i < @{$decodedJson->{rows}}; $i++) {
 
 
@@ -117,20 +124,39 @@ for(my $i = 0; $i < @{$decodedJson->{rows}}; $i++) {
         @possibleTaxonomyKeys = sort grep { /taxon/i} keys %{$decodedJson->{rows}->[$i]->{metadata}};
     }
 
+
     my @taxonomyAr;
     # taxonomy should be either 1 string OR list of taxa k->strain
     if(scalar @possibleTaxonomyKeys == 1) {
-        @taxonomyAr = @{$decodedJson->{rows}->[$i]->{metadata}->{$possibleTaxonomyKeys[0]}};
+        my $taxonomyThing = $decodedJson->{rows}->[$i]->{metadata}->{$possibleTaxonomyKeys[0]};
+
+        if(ref($taxonomyThing) eq 'ARRAY') {
+            @taxonomyAr = @$taxonomyThing;
+        }
+        else {
+            @taxonomyAr = split(/[;|]/, $taxonomyThing);
+        }
+        $hasTaxonomyCount++;
     }
 
     elsif(scalar @possibleTaxonomyKeys > 1) {
         @taxonomyAr = map { $decodedJson->{rows}->[$i]->{metadata}->{$_} || 'NA' } @possibleTaxonomyKeys;
+        $hasTaxonomyCount++;
     }
     else {
         my $id = $decodedJson->{rows}->[$i]->{id};
-        @taxonomyAr = ("${id}_unclassified", "NA", "NA", "NA", "NA", "NA", "NA");
-    }
 
+        @taxonomyAr = split(/[;|]/, $id);
+        if(scalar @taxonomyAr > 1) {
+            $hasTaxonomyCount++;
+        }
+
+
+#        if(length($taxonomyAr[0]) > $REASONABLE_ID_LENGTH) {
+#            die "This is not an ID.  It is too large:  $id "
+#        }
+
+    }
 
 
     my @taxArrayFixed;
@@ -138,12 +164,13 @@ for(my $i = 0; $i < @{$decodedJson->{rows}}; $i++) {
         my $level = $taxonomyAr[$t];
 
         # if the taxon string starts with a letter and two underscores... remove them
-        $level =~ s/^\w__//;
+        $level =~ s/^\s?\w?__//;
 
+        $level = "NA" unless($level);
         if($t == 0 && $level eq 'NA') {
             push(@taxArrayFixed, 'unclassified');
         }
-        elsif($level eq 'NA') {
+        elsif($level eq 'NA' || lc($level) eq 'none') {
             my $prevTax = $taxArrayFixed[$t-1];
             my $fixed = $prevTax =~ /unclassified/ ? $prevTax : $prevTax . "_unclassified";
 
@@ -157,34 +184,42 @@ for(my $i = 0; $i < @{$decodedJson->{rows}}; $i++) {
     my @line;
     push @line, join(";", @taxArrayFixed);
 
+    my $hasData;
     for(my $j = 0; $j < @ids; $j++) {
+        $hasData = 1 if $data[$i][$j];
         push @line, $data[$i][$j];
     }
-    print $tsvOut join("\t", @line) . "\n";
-
+    if($hasData) {
+        print $tsvOut join("\t", @line) . "\n";
+    }
 }
 
 close $tsvOut;
 close $sourceOut;
 close TERMS;
 
+
+unless($hasTaxonomyCount > 0) {
+    die "Taxonomy Missing.  Only found IDs";
+}
+
 print MAP "<ontologymappings>\n";
 
-foreach(@MATERIAL_TYPES) {
+foreach(keys %MATERIAL_TYPES) {
     print MAP <<MT
- <ontologyTerm source_id="MBIOTEMP_${_}" type="materialType">
-    <name>${_}</name>
+ <ontologyTerm source_id="${_}" type="materialType">
+    <name>$MATERIAL_TYPES{$_}</name>
   </ontologyTerm>
 MT
 }
-foreach(@CHAR_QUALIFIERS) {
+foreach(keys %CHAR_QUALIFIERS) {
     print MAP <<CHAR;
-  <ontologyTerm parent="Source" source_id="MBIOTEMP_${_}" type="characteristicQualifier">
-    <name>${_}</name>
+  <ontologyTerm parent="Source" source_id="${_}" type="characteristicQualifier">
+    <name>$CHAR_QUALIFIERS{$_}</name>
   </ontologyTerm>
 CHAR
 
-      print RELS "MBIOTEMP_${_}\tsubClassOf\tMBIOTEMP_${sourceType}\n";
+      print RELS "${_}\tsubClassOf\tMBIOTEMP_${sourceType}\n";
 }
 
 foreach(keys %taxaSourceIds) {
@@ -229,11 +264,14 @@ sub makeTermLine {
     my ($term, $name, $type) = @_;
 
 
+    my $sourceId = "MBIOTEMP_$term";
+    $sourceId =~ s/[^a-zA-Z0-9._]/_/g;
+
     if($type eq 'mt') {
-        push @MATERIAL_TYPES, $term;
+        $MATERIAL_TYPES{$sourceId} = $term;
     }
     elsif($type eq 'char') {
-        push @CHAR_QUALIFIERS, $term;
+        $CHAR_QUALIFIERS{$sourceId} = $term;
     }
     elsif($type eq 'taxa') {}
 
@@ -245,7 +283,7 @@ sub makeTermLine {
         return "$term\t$name\n";
     }
 
-    return "MBIOTEMP_$term\t$term\n";
+    return "$sourceId\t$term\n";
 }
 
 sub getDistinctVariables {
