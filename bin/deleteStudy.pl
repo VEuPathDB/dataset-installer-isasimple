@@ -92,7 +92,8 @@ sub deleteOtherEda {
     my ($dbh, $studyId, $entityTypeId, $partial) = @_;
 
     foreach("EntityAttributes", "AttributeUnit") {
-        deleteByEntityTypeId($dbh, $entityTypeId, $_);
+        #deleteByEntityTypeId($dbh, $entityTypeId, $_);
+        &truncateTable($dbh, $_);
     }
 
     foreach("studycharacteristic", "EntityType", "Study") {
@@ -105,24 +106,24 @@ sub deleteOtherEda {
 sub deleteProcessAttributes {
     my ($dbh, $entityTypeId) = @_;
 
-    $dbh->do("delete ApidbUserDatasets.processattributes where in_entity_id in (select entity_attributes_id from ApidbUserDatasets.entityattributes where entity_type_id = $entityTypeId)");
-    $dbh->do("delete ApidbUserDatasets.processattributes where out_entity_id in (select entity_attributes_id from ApidbUserDatasets.entityattributes where entity_type_id = $entityTypeId)");
+    $dbh->do("truncate table ApidbUserDatasets.processattributes");
+#    $dbh->do("delete ApidbUserDatasets.processattributes where in_entity_id in (select entity_attributes_id from ApidbUserDatasets.entityattributes where entity_type_id = $entityTypeId)");#
+#    $dbh->do("delete ApidbUserDatasets.processattributes where out_entity_id in (select entity_attributes_id from ApidbUserDatasets.entityattributes where entity_type_id = $entityTypeId)");
 }
 
 
 sub deleteGraphTables {
     my ($dbh, $studyId, $partial) = @_;
 
-    &deleteByStudyId($dbh, $studyId, "AttributeGraph");
+    &truncateTable($dbh, "AttributeGraph");
     &deleteByStudyId($dbh, $studyId, "EntityTypeGraph") unless($partial);
-
 }
 
 sub deleteAttributeTables {
     my ($dbh, $entityTypeId) = @_;
 
     foreach("Attribute", "AttributeValue") {
-        deleteByEntityTypeId($dbh, $entityTypeId, $_);
+        &truncateTable($dbh, $_);
     }
 }
 
@@ -139,6 +140,12 @@ sub deleteByExternalDatabaseReleaseId {
 }
 
 
+
+sub truncateTable {
+    my ($dbh, $table) = @_;
+
+    $dbh->do("truncate table apidbuserdatasets.${table}");
+}
 
 sub deleteByStudyId {
     my ($dbh, $studyId, $table) = @_;
