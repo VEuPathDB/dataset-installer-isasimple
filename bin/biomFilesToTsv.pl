@@ -160,26 +160,40 @@ for(my $i = 0; $i < @{$decodedJson->{rows}}; $i++) {
 
 
     my @taxArrayFixed;
+    my %seenLevels;
     for(my $t = 0; $t < scalar(@taxonomyAr); $t++) {
         my $level = $taxonomyAr[$t];
 
         # if the taxon string starts with a letter and two underscores... remove them
-        $level =~ s/^\s?\w?__//;
+#        $level =~ s/^\s?\w?__//;
 
         $level = "NA" unless($level);
+
         if($t == 0 && $level eq 'NA') {
-            push(@taxArrayFixed, 'unclassified');
+            $level = 'unclassified';
         }
-        elsif($level eq 'NA' || lc($level) eq 'none') {
+        if($level =~ /^(\w__)?NA$/ || lc($level) =~ /^(\w__)?none$/) {
+            my $levelPrefix = $1;
             my $prevTax = $taxArrayFixed[$t-1];
+            $prevTax =~ s/^\s?(\w__)/$levelPrefix/;
+
             my $fixed = $prevTax =~ /unclassified/ ? $prevTax : $prevTax . "_unclassified";
 
-            push(@taxArrayFixed, $fixed);
+            $level = $fixed;
+        }
+
+        if($seenLevels{$level}) {
+            push(@taxArrayFixed,  $level . "." .  $seenLevels{$level});
         }
         else {
             push(@taxArrayFixed, $level);
         }
+
+
+        $seenLevels{$level}++;
     }
+
+
 
     my @line;
     push @line, join(";", @taxArrayFixed);
