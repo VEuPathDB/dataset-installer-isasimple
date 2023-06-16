@@ -37,12 +37,13 @@ tar -cvzf model.tar.gz Model
 2. ensure you have an oracle instance with EDA_UD tables installed
 3. create a gus_home/config/gus.config
 4. create a working directory which contains the tab file(s) to be loaded and a metadata.json (see below)
-5. run loadStudy.bash in container
+5. run loadStudy.bash in container (note `--pwd` option required for singularity)
    #+begin_example
    singularity run \
     --bind $workDir:/work \
     --bind $componentGusConfigFile:/gusApp/gus_home/config/gus.config \
-    --bind $ORACLE_HOME/network/admin:/opt/oracle/instantclient_21_6/network/admin
+    --bind $ORACLE_HOME/network/admin:/opt/oracle/instantclient_21_6/network/admin \
+    --pwd /work \
     docker://veupathdb/dataset-installer-isasimple:latest loadStudy.bash $inputFile $userDatasetId $metadataJsonFile
    #+end_example
    - $workDir :: temp directory with the user's data file and the metadata.json
