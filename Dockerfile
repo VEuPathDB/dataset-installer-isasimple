@@ -25,7 +25,7 @@ RUN export INSTALL_GIT_COMMIT_SHA=05197ebc4eb2046cc16e632b0b5852f21727a209 \
 
 RUN mkdir -p $GUS_HOME/config && cp $PROJECT_HOME/install/gus.config.sample $GUS_HOME/config/gus.config
 
-RUN export CBIL_GIT_COMMIT_SHA=41e17a8c7c61a6ca55fd28bd0f4883c74dcb625c \
+RUN export CBIL_GIT_COMMIT_SHA=190c888a0c35653d0449178807f2e09b6ba4d871 \
     && git clone https://github.com/VEuPathDB/CBIL.git \
     && cd CBIL \
     && git checkout $CBIL_GIT_COMMIT_SHA \
@@ -39,7 +39,7 @@ RUN export GUS_GIT_COMMIT_SHA=b11d5a179c5d48af134929c94b68bb908ab53bd6 \
     && bld GUS/PluginMgr \
     && bld GUS/Supported
 
-RUN export APICOMMONDATA_GIT_COMMIT_SHA=710c87e7527be170faeeba417f3165963bf4e139 \
+RUN export APICOMMONDATA_GIT_COMMIT_SHA=c5b035a9348434ca080df056cfd656e87d26d8eb \
     && git clone https://github.com/VEuPathDB/ApiCommonData.git \
     && cd ApiCommonData \
     && git checkout $APICOMMONDATA_GIT_COMMIT_SHA \
@@ -47,7 +47,7 @@ RUN export APICOMMONDATA_GIT_COMMIT_SHA=710c87e7527be170faeeba417f3165963bf4e139
     && cp $PROJECT_HOME/ApiCommonData/Load/plugin/perl/*.pm $GUS_HOME/lib/perl/ApiCommonData/Load/Plugin/ \
     && cp -r $PROJECT_HOME/ApiCommonData/Load/lib/perl/* $GUS_HOME/lib/perl/ApiCommonData/Load/
 
-RUN export CLINEPIDATA_GIT_COMMIT_SHA=5238bc44754b7db7c1ce82da57e66264e53b3755 \
+RUN export CLINEPIDATA_GIT_COMMIT_SHA=0c2758f64b67cb8504b30616b37d79a649e18d48   \
     && git clone https://github.com/VEuPathDB/ClinEpiData.git \
     && cd ClinEpiData \
     && git checkout $CLINEPIDATA_GIT_COMMIT_SHA \
