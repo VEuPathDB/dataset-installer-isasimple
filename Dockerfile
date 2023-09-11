@@ -60,6 +60,7 @@ RUN perl -MCPAN -e 'install qq(Switch)' \
 
 
 COPY ./bin/* /usr/local/bin/
+COPY ./lib/xml/* /usr/local/lib/xml/
 
 # This Bit copies the Premade GUS Perl Objects
 COPY ./res/model.tar.gz $GUS_HOME/lib/perl/GUS/
