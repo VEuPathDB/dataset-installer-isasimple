@@ -14,6 +14,13 @@ biomFilesToTsv.pl $biomTsvFile $biomMetadataFile
 
 # basename of last directory modified
 study="$(basename $(\ls -1dt ./*/ | head -n 1))"
+
+GEO_MAPPINGS=/usr/local/lib/xml/geoMappings.xml
+GEO_ARG=""
+if test -f "$GEO_MAPPINGS"; then
+    GEO_ARG="--ontologyMappingOverrideFile $GEO_MAPPINGS"
+fi
+
 externalDatabaseName=MicrobiomeStudyEDA_${study}_RSRC
 
 ga GUS::Supported::Plugin::InsertExternalDatabase --name $externalDatabaseName --commit;
@@ -24,14 +31,17 @@ ga GUS::Supported::Plugin::InsertExternalDatabaseRls --databaseName "${externalD
 
 touch $study/ontology_relationships.txt;
 
-ga GUS::Supported::Plugin::InsertOntologyFromTabDelim \
+# always add lat and long to ontology_terms just in case
+perl -I $GUS_HOME/lib/perl -e 'use ApiCommonData::Load::StudyUtils; print ${ApiCommonData::Load::StudyUtils::latitudeSourceId} . "\t" . "latitude" . "\n";' >>$study/ontology_terms.txt
+perl -I $GUS_HOME/lib/perl -e 'use ApiCommonData::Load::StudyUtils; print ${ApiCommonData::Load::StudyUtils::longitudeSourceId} . "\t" . "longitude" . "\n";' >>$study/ontology_terms.txt
+
+ga ApiCommonData::Load::Plugin::InsertOntologyFromTabDelimUD \
     --termFile $study/ontology_terms.txt \
     --relFile $study/ontology_relationships.txt \
-    --relTypeExtDbRlsSpec "Ontology_Relationship_Types_RSRC|1.3" \
     --extDbRlsSpec "${externalDatabaseName}_terms|dontcare" \
     --commit
 
-ga ApiCommonData::Load::Plugin::MBioInsertEntityGraph \
+ga ApiCommonData::Load::Plugin::MBioInsertEntityGraph $GEO_ARG \
   --commit \
   --investigationFile $PWD/$study/investigation.xml \
   --sampleDetailsFile $PWD/$study/source.tsv \
