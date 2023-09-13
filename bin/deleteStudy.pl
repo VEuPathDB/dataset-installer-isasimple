@@ -60,14 +60,14 @@ foreach my $studyId (keys %$studies) {
     }
 
     foreach($extDbId, $termsExtDbId) {
-        $dbh->do("delete SRES.ExternalDatabase where external_database_id = $_") unless($partial);
+        $dbh->do("delete APIDBUSERDATASETS.ExternalDatabase where external_database_id = $_") unless($partial);
     }
 }
 
 sub queryExternalDatabase {
     my ($dbh, $name, $version) = @_;
 
-    my $sql = "select d.external_database_id, r.external_database_release_id from sres.externaldatabase d, sres.externaldatabaserelease r where r.external_database_id = d.external_database_id and d.name = '$name' and r.version = '$version'";
+    my $sql = "select d.external_database_id, r.external_database_release_id from apidbuserdatasets.externaldatabase d, apidbuserdatasets.externaldatabaserelease r where r.external_database_id = d.external_database_id and d.name = '$name' and r.version = '$version'";
     my $sh = $dbh->prepare($sql);
     $sh->execute();
     my ($extDbId, $extDbRlsId) = $sh->fetchrow_array();
@@ -136,7 +136,7 @@ sub deleteByEntityTypeId {
 sub deleteByExternalDatabaseReleaseId {
     my ($dbh, $extDbRlsId, $table) = @_;
 
-    $dbh->do("delete SRES.${table} where external_database_release_id = $extDbRlsId");
+    $dbh->do("delete APIDBUSERDATASETS.${table} where external_database_release_id = $extDbRlsId");
 }
 
 
@@ -188,7 +188,7 @@ sub queryStudy {
 
     my %rv;
 
-    my $sql = "select s.study_id, s.internal_abbrev, s.external_database_release_id, r.version, d.name, d.external_database_id from ApidbUserDatasets.study s, sres.externaldatabase d, sres.externaldatabaserelease r where s.user_dataset_id = ? and s.external_database_release_id = r.external_database_release_id and r.external_database_id = d.external_database_id";
+    my $sql = "select s.study_id, s.internal_abbrev, s.external_database_release_id, r.version, d.name, d.external_database_id from ApidbUserDatasets.study s, apidbuserdatasets.externaldatabase d, apidbuserdatasets.externaldatabaserelease r where s.user_dataset_id = ? and s.external_database_release_id = r.external_database_release_id and r.external_database_id = d.external_database_id";
     my $sh = $dbh->prepare($sql);
     $sh->execute($userDatasetId);
 
