@@ -91,7 +91,7 @@ sub deleteOntology {
 sub deleteOtherEda {
     my ($dbh, $studyId, $entityTypeId, $partial) = @_;
 
-    foreach("EntityAttributes", "AttributeUnit") {
+    foreach("EntityClassification", "EntityAttributes", "AttributeUnit") {
         #deleteByEntityTypeId($dbh, $entityTypeId, $_);
         &truncateTable($dbh, $_);
     }
@@ -122,7 +122,7 @@ sub deleteGraphTables {
 sub deleteAttributeTables {
     my ($dbh, $entityTypeId) = @_;
 
-    foreach("Attribute", "AttributeValue") {
+    foreach("Attribute") {
         &truncateTable($dbh, $_);
     }
 }
