@@ -55,7 +55,8 @@ RUN export CLINEPIDATA_GIT_COMMIT_SHA=0c2758f64b67cb8504b30616b37d79a649e18d48  
 
 
 RUN perl -MCPAN -e 'install qq(Switch)' \
-   && perl -MCPAN -e 'install qq(Config::Std)' \
+    && perl -MCPAN -e 'install qq(Config::Std)' \
+   && perl -MCPAN -e 'install qq(Text::Unidecode)' \
    && perl -MCPAN -e 'install qq(XML::Simple)'
 
 
