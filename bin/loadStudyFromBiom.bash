@@ -23,11 +23,11 @@ fi
 
 externalDatabaseName=MicrobiomeStudyEDA_${study}_RSRC
 
-ga GUS::Supported::Plugin::InsertExternalDatabase --name $externalDatabaseName --commit;
-ga GUS::Supported::Plugin::InsertExternalDatabaseRls --databaseName $externalDatabaseName --databaseVersion dontcare --commit;
+ga ApiCommonData::Load::Plugin::InsertExternalDatabaseUD --name $externalDatabaseName --commit;
+ga ApiCommonData::Load::Plugin::InsertExternalDatabaseRlsUD --databaseName $externalDatabaseName --databaseVersion dontcare --commit;
 
-ga GUS::Supported::Plugin::InsertExternalDatabase --name "${externalDatabaseName}_terms" --commit;
-ga GUS::Supported::Plugin::InsertExternalDatabaseRls --databaseName "${externalDatabaseName}_terms" --databaseVersion dontcare --commit;
+ga ApiCommonData::Load::Plugin::InsertExternalDatabaseUD --name "${externalDatabaseName}_terms" --commit;
+ga ApiCommonData::Load::Plugin::InsertExternalDatabaseRlsUD --databaseName "${externalDatabaseName}_terms" --databaseVersion dontcare --commit;
 
 touch $study/ontology_relationships.txt;
 

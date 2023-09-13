@@ -24,11 +24,11 @@ fi
 
 ontologyTermsToTabDelim.pl ${study}/ontologyMapping.xml ${study}
 
-ga GUS::Supported::Plugin::InsertExternalDatabase --name $study --commit;
-ga GUS::Supported::Plugin::InsertExternalDatabaseRls --databaseName $study --databaseVersion dontcare --commit;
+ga ApiCommonData::Load::Plugin::InsertExternalDatabaseUD --name $study --commit;
+ga ApiCommonData::Load::Plugin::InsertExternalDatabaseRlsUD --databaseName $study --databaseVersion dontcare --commit;
 
-ga GUS::Supported::Plugin::InsertExternalDatabase --name "${study}_terms" --commit;
-ga GUS::Supported::Plugin::InsertExternalDatabaseRls --databaseName "${study}_terms" --databaseVersion dontcare --commit;
+ga ApiCommonData::Load::Plugin::InsertExternalDatabaseUD --name "${study}_terms" --commit;
+ga ApiCommonData::Load::Plugin::InsertExternalDatabaseRlsUD --databaseName "${study}_terms" --databaseVersion dontcare --commit;
 
 # always add lat and long to ontology_terms just in case
 perl -I $GUS_HOME/lib/perl -e 'use ApiCommonData::Load::StudyUtils; print ${ApiCommonData::Load::StudyUtils::latitudeSourceId} . "\t" . "latitude" . "\n";' >>$study/ontology_terms.txt
