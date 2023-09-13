@@ -31,7 +31,7 @@ RUN export CBIL_GIT_COMMIT_SHA=190c888a0c35653d0449178807f2e09b6ba4d871 \
     && git checkout $CBIL_GIT_COMMIT_SHA \
     && bld CBIL
 
-RUN export GUS_GIT_COMMIT_SHA=b11d5a179c5d48af134929c94b68bb908ab53bd6 \
+RUN export GUS_GIT_COMMIT_SHA=f5906f3b96a07fe499567f41b0eba93a765c676f \
     && git clone https://github.com/VEuPathDB/GusAppFramework.git \
     && mv GusAppFramework GUS \
     && cd GUS \
@@ -39,7 +39,7 @@ RUN export GUS_GIT_COMMIT_SHA=b11d5a179c5d48af134929c94b68bb908ab53bd6 \
     && bld GUS/PluginMgr \
     && bld GUS/Supported
 
-RUN export APICOMMONDATA_GIT_COMMIT_SHA=637c58e6854f0c6c633f173de7e6ac20bc1f34d7 \
+RUN export APICOMMONDATA_GIT_COMMIT_SHA=497a264cd7be861e660091d9604a86b9bf31dfc7 \
     && git clone https://github.com/VEuPathDB/ApiCommonData.git \
     && cd ApiCommonData \
     && git checkout $APICOMMONDATA_GIT_COMMIT_SHA \
