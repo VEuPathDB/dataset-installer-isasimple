@@ -13,17 +13,22 @@ my $REASONABLE_ID_LENGTH = 100;
 my %MATERIAL_TYPES;
 my %CHAR_QUALIFIERS;
 
-my %taxaSourceIds = ('EUPATH_0009251' => "Kingdom",
-                     'EUPATH_0009252' => "Phylum",
-                     'EUPATH_0009253' => "Class",
-                     'EUPATH_0009254' => "Order",
-                     'EUPATH_0009255' => "Family",
-                     'EUPATH_0009256' => "Genus",
-                     'EUPATH_0009257' => "Species",
+my %taxaSourceIds = ('EUPATH_0009251' => "Kingdom - Relative Abundance",
+                     'EUPATH_0009252' => "Phylum - Relative Abundance",
+                     'EUPATH_0009253' => "Class - Relative Abundance",
+                     'EUPATH_0009254' => "Order - Relative Abundance",
+                     'EUPATH_0009255' => "Family - Relative Abundance",
+                     'EUPATH_0009256' => "Genus - Relative Abundance",
+                     'EUPATH_0009257' => "Species - Relative Abundance",
+                     'EUPATH_0009351' => "Kingdom - Absolute Abundance",
+                     'EUPATH_0009352' => "Phylum - Absolute Abundance",
+                     'EUPATH_0009353' => "Class - Absolute Abundance",
+                     'EUPATH_0009354' => "Order - Absolute Abundance",
+                     'EUPATH_0009355' => "Family - Absolute Abundance",
+                     'EUPATH_0009356' => "Genus - Absolute Abundance",
+                     'EUPATH_0009357' => "Species - Absolute Abundance"
                      'MBIOTEMP_TAXON_SOURCE_ID' => "Taxon ID"
     );
-
-
 
 my $taxonIdSourceID = "MBIOTEMP_TAXON_SOURCE_ID";
 
