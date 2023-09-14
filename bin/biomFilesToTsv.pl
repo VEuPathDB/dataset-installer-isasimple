@@ -26,7 +26,7 @@ my %taxaSourceIds = ('EUPATH_0009251' => "Kingdom - Relative Abundance",
                      'EUPATH_0009354' => "Order - Absolute Abundance",
                      'EUPATH_0009355' => "Family - Absolute Abundance",
                      'EUPATH_0009356' => "Genus - Absolute Abundance",
-                     'EUPATH_0009357' => "Species - Absolute Abundance"
+                     'EUPATH_0009357' => "Species - Absolute Abundance",
                      'MBIOTEMP_TAXON_SOURCE_ID' => "Taxon ID"
     );
 
