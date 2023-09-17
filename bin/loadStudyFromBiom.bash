@@ -71,6 +71,7 @@ ga ApiCommonData::Load::Plugin::LoadEntityTypeAndAttributeGraphs \
  ga ApiCommonData::Load::Plugin::LoadDatasetSpecificEntityGraph \
     --extDbRlsSpec "${externalDatabaseName}|dontcare" \
     --schema ApidbUserDatasets \
+    --collectionsYaml $PROJECT_HOME/ApiCommonData/Load/ontology/General/collections/collections.yaml \
     --commit
 
  ga ApiCommonData::Load::Plugin::InsertUserDatasetAttributes \
@@ -79,7 +80,6 @@ ga ApiCommonData::Load::Plugin::LoadEntityTypeAndAttributeGraphs \
      --commit
 
  # This is temporary solution;  remove when merge with megastudy branch
- updateHasCollections.pl $userDatasetId
 
  # clean out tables not used by the application with partial delete
  deleteStudy.pl $userDatasetId 1
