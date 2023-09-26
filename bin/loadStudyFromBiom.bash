@@ -34,6 +34,8 @@ touch $study/ontology_relationships.txt;
 # always add lat and long to ontology_terms just in case
 perl -I $GUS_HOME/lib/perl -e 'use ApiCommonData::Load::StudyUtils; print ${ApiCommonData::Load::StudyUtils::latitudeSourceId} . "\t" . "latitude" . "\n";' >>$study/ontology_terms.txt
 perl -I $GUS_HOME/lib/perl -e 'use ApiCommonData::Load::StudyUtils; print ${ApiCommonData::Load::StudyUtils::longitudeSourceId} . "\t" . "longitude" . "\n";' >>$study/ontology_terms.txt
+perl -I $GUS_HOME/lib/perl -e 'use ApiCommonData::Load::StudyUtils; while(my ($geohash, $prec) = each %${ApiCommonData::Load::StudyUtils::GEOHASH_PRECISION}){print $geohash . "\t" . "GEOHASH $prec\n";}' >>$study/ontology_terms.txt
+
 
 ga ApiCommonData::Load::Plugin::InsertOntologyFromTabDelimUD \
     --termFile $study/ontology_terms.txt \
