@@ -19,7 +19,7 @@ GEO_MAPPINGS=/usr/local/lib/xml/geoMappings.xml
 GEO_ARG=""
 if test -f "$GEO_MAPPINGS"; then
     cp $GEO_MAPPINGS $study/
-    GEO_ARG="--ontologyMappingOverrideFileBaseName geoMappings.xml"
+    GEO_ARG="--ontologyMappingOverrideFileBaseName $PWD/$study/geoMappings.xml"
 fi
 
 ontologyTermsToTabDelim.pl ${study}/ontologyMapping.xml ${study}

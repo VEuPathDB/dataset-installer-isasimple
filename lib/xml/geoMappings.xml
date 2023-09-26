@@ -1,12 +1,12 @@
 <ontologymappings>
-<ontologyTerm source_id="OBI_0001620" type="characteristicQualifier" parent="Source">
+<ontologyTerm source_id="OBI_0001620" type="characteristicQualifier" parent="ENTITY">
   <name>latitude</name>
   <name>Latitude</name>
   <name>LATITUDE</name>
   <name>_latitude</name>
 </ontologyTerm>
 
-<ontologyTerm source_id="OBI_0001621" type="characteristicQualifier" parent="Source">
+<ontologyTerm source_id="OBI_0001621" type="characteristicQualifier" parent="ENTITY">
   <name>longitude</name>
   <name>Longitude</name>
   <name>LONGITUDE</name>
