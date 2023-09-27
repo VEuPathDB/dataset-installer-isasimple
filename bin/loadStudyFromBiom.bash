@@ -31,9 +31,12 @@ ga ApiCommonData::Load::Plugin::InsertExternalDatabaseRlsUD --databaseName "${ex
 
 touch $study/ontology_relationships.txt;
 
-# always add lat and long to ontology_terms just in case
-geoTermsAndRelationships.pl --output_type term >>$study/ontology_terms.txt
-geoTermsAndRelationships.pl --output_type relationship --attributeGraphRootId 'MBIOTEMP_Source' >>$study/ontology_relationships.txt
+# always add lat and long to ontology_terms just in case.
+geoTermsAndRelationships.pl --output_type term >$study/ontology_terms.txt.geohash
+geoTermsAndRelationships.pl --output_type relationship --ontology_terms $study/ontology_terms.txt --ontology_relationships $study/ontology_relationships.txt >$study/ontology_relationships.txt.geohash
+
+cat $study/ontology_terms.txt.geohash >> $study/ontology_terms.txt
+cat $study/ontology_relationships.txt.geohash >>$study/ontology_relationships.txt
 
 ga ApiCommonData::Load::Plugin::InsertOntologyFromTabDelimUD \
     --termFile $study/ontology_terms.txt \

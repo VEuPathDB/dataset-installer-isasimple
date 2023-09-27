@@ -10,37 +10,56 @@ use Getopt::Long;
 
 use ApiCommonData::Load::StudyUtils;
 
-my ($outputType, $attributeGraphRootFile, $attributeGraphRootId);
+my ($outputType, $ontologyTermsFile, $ontologyRelationshipsFile);
 &GetOptions('output_type=s' => \$outputType,
-            'attributeGraphRootFile=s' => \$attributeGraphRootFile,
-            'attributeGraphRootId=s' => \$attributeGraphRootId,
+            'ontology_terms=s' => \$ontologyTermsFile,
+            'ontology_relationships=s' => \$ontologyRelationshipsFile,
     );
 
-if($outputType eq 'term') {
-    print ${ApiCommonData::Load::StudyUtils::latitudeSourceId} . "\t" . "latitude" . "\n";
-    print ${ApiCommonData::Load::StudyUtils::longitudeSourceId} . "\t" . "longitude" . "\n";
-    while(my ($geohash, $prec) = each %${ApiCommonData::Load::StudyUtils::GEOHASH_PRECISION}) {
-        print $geohash . "\t" . "GEOHASH $prec\n";
-    }
+my %geoTerms;
+
+$geoTerms{${ApiCommonData::Load::StudyUtils::latitudeSourceId}} = 'latitude';
+$geoTerms{${ApiCommonData::Load::StudyUtils::longitudeSourceId}} = 'longitude';
+while(my ($geohash, $prec) = each %${ApiCommonData::Load::StudyUtils::GEOHASH_PRECISION}) {
+    $geoTerms{$geohash} = "GEOHASH $prec";
 }
-elsif($outputType eq 'relationship') {
-    my $attributeGraphRoot;
-    if($attributeGraphRootFile) {
-        $attributeGraphRoot = lc(basename $attributeGraphRootFile);
-        $attributeGraphRoot =~ s/\.[^.]+$//;
-        $attributeGraphRoot = "TEMP_${attributeGraphRoot}";
-    }
-    elsif($attributeGraphRootId) {
-        $attributeGraphRoot = $attributeGraphRootId;
-    }
-    else {
-        die "Must provide Either an attribute graph root file or id";
+
+if($outputType eq 'term') {
+    foreach my $sourceId (keys %geoTerms) {
+        print "$sourceId\t$geoTerms{$sourceId}\n";
     }
 
-    print ${ApiCommonData::Load::StudyUtils::latitudeSourceId} . "\tsubClassOf\t" . $attributeGraphRoot . "\n";
-    print ${ApiCommonData::Load::StudyUtils::longitudeSourceId} .  "\tsubClassOf\t" . $attributeGraphRoot . "\n";
-    while(my ($geohash, $prec) = each %${ApiCommonData::Load::StudyUtils::GEOHASH_PRECISION}) {
-        print $geohash  . "\tsubClassOf\t" . $attributeGraphRoot . "\n";;
+}
+elsif($outputType eq 'relationship') {
+
+    my $parent;
+
+    open(REL, $ontologyRelationshipsFile) or die "Cannot open file $ontologyRelationshipsFile for reading: $!";
+    my %children;
+    while(<REL>) {
+        chomp;
+        my @a = split(/\t/, $_);
+        $children{$a[0]} = 1;
+    }
+    close REL;
+
+    open(TERM, $ontologyTermsFile) or die "Cannot open file $ontologyTermsFile for reading: $!";
+    while(<TERM>) {
+        chomp;
+        my @a = split(/\t/, $_);
+        my $possibleParent = $a[0];
+
+        next if($children{$possibleParent});
+
+        if($parent) {
+            die "Multiple Roots found for Attribute Graph:  $possibleParent and $parent";
+        }
+        $parent = $possibleParent;
+    }
+    close TERM;
+
+    foreach my $geohash (keys %geoTerms) {
+        print $geohash  . "\tsubClassOf\t" . $parent . "\n";;
     }
 }
 else {
