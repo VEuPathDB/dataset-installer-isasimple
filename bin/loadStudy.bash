@@ -31,9 +31,8 @@ ga ApiCommonData::Load::Plugin::InsertExternalDatabaseUD --name "${study}_terms"
 ga ApiCommonData::Load::Plugin::InsertExternalDatabaseRlsUD --databaseName "${study}_terms" --databaseVersion dontcare --commit;
 
 # always add lat and long to ontology_terms just in case
-perl -I $GUS_HOME/lib/perl -e 'use ApiCommonData::Load::StudyUtils; print ${ApiCommonData::Load::StudyUtils::latitudeSourceId} . "\t" . "latitude" . "\n";' >>$study/ontology_terms.txt
-perl -I $GUS_HOME/lib/perl -e 'use ApiCommonData::Load::StudyUtils; print ${ApiCommonData::Load::StudyUtils::longitudeSourceId} . "\t" . "longitude" . "\n";' >>$study/ontology_terms.txt
-perl -I $GUS_HOME/lib/perl -e 'use ApiCommonData::Load::StudyUtils; while(my ($geohash, $prec) = each %${ApiCommonData::Load::StudyUtils::GEOHASH_PRECISION}){print $geohash . "\t" . "GEOHASH $prec\n";}' >>$study/ontology_terms.txt
+geoTermsAndRelationships.pl --output_type term >>$study/ontology_terms.txt
+geoTermsAndRelationships.pl --output_type relationship --attributeGraphRootFile $inputFileOrDir >>$study/ontology_relationships.txt
 
 ga ApiCommonData::Load::Plugin::InsertOntologyFromTabDelimUD \
     --termFile $study/ontology_terms.txt \
